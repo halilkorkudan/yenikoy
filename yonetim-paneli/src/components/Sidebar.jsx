@@ -30,6 +30,11 @@ const Sidebar = () => {
         <li className="nav-item mb-2">
           <Link className="nav-link text-white" to="/uyeler">Üyeler</Link>
         </li>
+        <li className="nav-item mb-2">
+          <Link className="nav-link text-white" to="/raporlar">Raporlar</Link>
+        </li>
+        
+        
       </ul>
     </div>
   );
