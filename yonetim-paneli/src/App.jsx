@@ -3,6 +3,7 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import AnaSayfa from './pages/AnaSayfa';
 import IsDagitimi from './pages/isDagitimi';
+import UyeisDag from './pages/uyeisDagitimi';
 import Ayarlar from './pages/AktifSira';
 import Uyeler from './pages/Uyeler';
 import FirmaBilgileri from "./pages/firma-bilgileri";
@@ -24,6 +25,8 @@ function App() {
             <Route path="/firma-bilgileri" element={<FirmaBilgileri />} />
             <Route path="/raporlar" element={<Raporlar />} />
             <Route path="/isEmirleri" element={<IsEmirleri />} />
+            <Route path="/isDagitimi/uye" element={<UyeisDag />} />
+
           </Routes>
         </div>
       </div>

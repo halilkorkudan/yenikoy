@@ -3,7 +3,7 @@ import { Table, Button, Modal, Form, Row, Col } from "react-bootstrap";
 import * as XLSX from "xlsx";
 
 const initialData = [
-  { id: 1, musteri: "Musteri1", nakliyeNo: "N001", nakliyeGuzergah: "İstanbul-Ankara", musteriAdi: "Ahmet Yılmaz", aracTipi: "Tır", tonaj: 20, aciklama: "Özel yük", tur: "Dönüş" }
+  { id: 1, musteri: "Musteri1", nakliyeNo: "N001", nakliyeGuzergah: "İstanbul-Ankara", musteriAdi: "Ahmet Yılmaz", aracTipi: "Tır", tonaj: 20, aciklama: "Özel yük", tur: "Dönüşlü" }
 ];
 
 const IsEmirleriTable = () => {
@@ -17,8 +17,12 @@ const IsEmirleriTable = () => {
     aracTipi: "",
     tonaj: 0,
     aciklama: "",
-    tur: "Dönüş",
-    adet: 1
+    tur: "Dönüşlü",
+    adet: 1,
+    donusGuzergah: "",
+    donusRefNo: "",
+    donusDuraklari: "",
+    donusYukTipi: ""
   });
   const [editIndex, setEditIndex] = useState(null);
 
@@ -27,7 +31,8 @@ const IsEmirleriTable = () => {
       setFormData({ ...data[index], adet: 1 });
       setEditIndex(index);
     } else {
-      setFormData({ musteri: "", nakliyeNo: "", nakliyeGuzergah: "", musteriAdi: "", aracTipi: "", tonaj: 0, aciklama: "", tur: "Dönüş", adet: 1 });
+      setFormData({ musteri: "", nakliyeNo: "", nakliyeGuzergah: "", musteriAdi: "", aracTipi: "", tonaj: 0, aciklama: "", tur: "Dönüşlü", adet: 1,
+        donusGuzergah: "", donusRefNo: "", donusDuraklari: "", donusYukTipi: "" });
       setEditIndex(null);
     }
     setShowModal(true);
@@ -50,7 +55,11 @@ const IsEmirleriTable = () => {
       aracTipi: formData.aracTipi,
       tonaj: formData.tonaj,
       aciklama: formData.aciklama,
-      tur: formData.tur
+      tur: formData.tur,
+      donusGuzergah: formData.donusGuzergah,
+      donusRefNo: formData.donusRefNo,
+      donusDuraklari: formData.donusDuraklari,
+      donusYukTipi: formData.donusYukTipi
     });
 
     if (editIndex !== null) {
@@ -89,7 +98,6 @@ const IsEmirleriTable = () => {
       const ws = wb.Sheets[wsname];
       const importedData = XLSX.utils.sheet_to_json(ws);
 
-      // Her satıra id ekle
       const dataWithIds = importedData.map((row, i) => ({
         id: data.length + i + 1,
         musteri: row.musteri || "",
@@ -99,7 +107,11 @@ const IsEmirleriTable = () => {
         aracTipi: row.aracTipi || "",
         tonaj: row.tonaj || 0,
         aciklama: row.aciklama || "",
-        tur: row.tur || "Dönüş"
+        tur: row.tur || "Dönüşlü",
+        donusGuzergah: row.donusGuzergah || "",
+        donusRefNo: row.donusRefNo || "",
+        donusDuraklari: row.donusDuraklari || "",
+        donusYukTipi: row.donusYukTipi || ""
       }));
 
       setData(prev => [...prev, ...dataWithIds]);
@@ -194,10 +206,10 @@ const IsEmirleriTable = () => {
                   <Form.Check 
                     inline 
                     type="radio" 
-                    label="Dönüş" 
+                    label="Dönüşlü" 
                     name="tur" 
-                    value="Dönüş" 
-                    checked={formData.tur === "Dönüş"} 
+                    value="Dönüşlü" 
+                    checked={formData.tur === "Dönüşlü"} 
                     onChange={handleChange} 
                   />
                   <Form.Check 
@@ -212,6 +224,31 @@ const IsEmirleriTable = () => {
                 </div>
               </Col>
             </Row>
+
+            {formData.tur === "Dönüşlü" && (
+              <>
+                <Row className="mb-2">
+                  <Col>
+                    <Form.Label>Dönüş Güzergahı</Form.Label>
+                    <Form.Control name="donusGuzergah" value={formData.donusGuzergah} onChange={handleChange} />
+                  </Col>
+                  <Col>
+                    <Form.Label>Dönüş Referans No</Form.Label>
+                    <Form.Control name="donusRefNo" value={formData.donusRefNo} onChange={handleChange} />
+                  </Col>
+                </Row>
+                <Row className="mb-2">
+                  <Col>
+                    <Form.Label>Dönüş Durakları</Form.Label>
+                    <Form.Control name="donusDuraklari" value={formData.donusDuraklari} onChange={handleChange} />
+                  </Col>
+                  <Col>
+                    <Form.Label>Dönüş Yük Tipi</Form.Label>
+                    <Form.Control name="donusYukTipi" value={formData.donusYukTipi} onChange={handleChange} />
+                  </Col>
+                </Row>
+              </>
+            )}
 
             {!editIndex && (
               <Row className="mb-2">
