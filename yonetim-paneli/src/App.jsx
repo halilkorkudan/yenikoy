@@ -9,6 +9,7 @@ import Uyeler from './pages/Uyeler';
 import FirmaBilgileri from "./pages/firma-bilgileri";
 import Raporlar from './pages/Raporlar';
 import IsEmirleri from './pages/isEmirleri';
+import SiraDurumu from './pages/SiraDurumu';
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
             <Route path="/raporlar" element={<Raporlar />} />
             <Route path="/isEmirleri" element={<IsEmirleri />} />
             <Route path="/isDagitimi/uye" element={<UyeisDag />} />
+            <Route path="/isDagitimi/sira" element={<SiraDurumu />} />
+            {/* Add other routes as needed */}
 
           </Routes>
         </div>

@@ -47,7 +47,7 @@ const AktifSira = () => {
 
   const siraAc = (uyeId) => {
     console.log(`Sıra aç - Üye ID: ${uyeId}`);
-    const yeniUyeler = uyeler.map(uye => 
+    const yeniUyeler = uyeler.map(uye =>
       uye.id === uyeId ? { ...uye, durum: "acik" } : uye
     );
     setUyeler(yeniUyeler);
@@ -57,7 +57,7 @@ const AktifSira = () => {
 
   const siraKapat = (uyeId) => {
     console.log(`Sıra kapat - Üye ID: ${uyeId}`);
-    const yeniUyeler = uyeler.map(uye => 
+    const yeniUyeler = uyeler.map(uye =>
       uye.id === uyeId ? { ...uye, durum: "kapali" } : uye
     );
     setUyeler(yeniUyeler);
@@ -78,9 +78,9 @@ const AktifSira = () => {
 
   const excelAktar = () => {
     // Excel dosyası oluşturma simülasyonu
-    const csvContent = "SIRA,KOD,PLAKA,ARAÇ TİPİ,JOKER,DURUM\n" + 
+    const csvContent = "SIRA,KOD,PLAKA,ARAÇ TİPİ,JOKER,DURUM\n" +
       uyeler.map(uye => `${uye.sira},${uye.kod},${uye.plaka},${uye.aracTipi},${uye.joker ? 'Evet' : 'Hayır'},${uye.durum === 'acik' ? 'Açık' : 'Kapalı'}`).join('\n');
-    
+
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
@@ -90,7 +90,7 @@ const AktifSira = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     console.log("Excel dosyası indirildi");
   };
 
@@ -140,53 +140,53 @@ const AktifSira = () => {
         </body>
       </html>
     `;
-    
+
     const printWindow = window.open('', '_blank');
     printWindow.document.write(printContent);
     printWindow.document.close();
     printWindow.print();
-    
+
     console.log("PDF raporu yazdırıldı");
   };
 
   return (
-    <div style={{ 
-      width: '100%', 
-      backgroundColor: '#f5f5f5', 
-      minHeight: '100vh', 
+    <div style={{
+      width: '100%',
+      backgroundColor: '#f5f5f5',
+      minHeight: '100vh',
       padding: isMobile ? '10px' : '15px'
     }}>
-      
+
       {/* Sol Panel - Sadece desktop ve tablet için */}
       {!isMobile && (
-        <div style={{ 
-          position: 'fixed', 
+        <div style={{
+          position: 'fixed',
           left: isDesktop ? '280px' : '270px',
-          top: '120px', 
+          top: '120px',
           width: isDesktop ? '220px' : '200px',
-          backgroundColor: 'white', 
-          border: '1px solid #ddd', 
-          borderRadius: '10px', 
+          backgroundColor: 'white',
+          border: '1px solid #ddd',
+          borderRadius: '10px',
           padding: '20px',
           zIndex: 100,
           boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
         }}>
-          <h3 style={{ 
-            margin: '0 0 20px 0', 
-            fontSize: '16px', 
-            fontWeight: 'bold', 
+          <h3 style={{
+            margin: '0 0 20px 0',
+            fontSize: '16px',
+            fontWeight: 'bold',
             textAlign: 'center',
             color: '#2c3e50'
           }}>ARAÇ DURUMU</h3>
-          
+
           <div style={{ marginBottom: '12px' }}>
-            <button style={{ 
-              backgroundColor: '#ff6b6b', 
-              color: 'white', 
-              border: 'none', 
-              padding: '12px 16px', 
-              borderRadius: '8px', 
-              width: '100%', 
+            <button style={{
+              backgroundColor: '#ff6b6b',
+              color: 'white',
+              border: 'none',
+              padding: '12px 16px',
+              borderRadius: '8px',
+              width: '100%',
               marginBottom: '8px',
               fontSize: '13px',
               fontWeight: 'bold',
@@ -195,15 +195,15 @@ const AktifSira = () => {
               Araç Sırada
             </button>
           </div>
-          
+
           <div style={{ marginBottom: '12px' }}>
-            <button style={{ 
-              backgroundColor: 'white', 
-              color: 'black', 
-              border: '2px solid #28a745', 
-              padding: '12px 16px', 
-              borderRadius: '8px', 
-              width: '100%', 
+            <button style={{
+              backgroundColor: 'white',
+              color: 'black',
+              border: '2px solid #28a745',
+              padding: '12px 16px',
+              borderRadius: '8px',
+              width: '100%',
               marginBottom: '8px',
               fontSize: '13px',
               fontWeight: 'bold',
@@ -212,15 +212,15 @@ const AktifSira = () => {
               Araç Dışarıda
             </button>
           </div>
-          
+
           <div style={{ marginBottom: '15px' }}>
-            <button style={{ 
-              backgroundColor: '#6c757d', 
-              color: 'white', 
-              border: 'none', 
-              padding: '12px 16px', 
-              borderRadius: '8px', 
-              width: '100%', 
+            <button style={{
+              backgroundColor: '#6c757d',
+              color: 'white',
+              border: 'none',
+              padding: '12px 16px',
+              borderRadius: '8px',
+              width: '100%',
               marginBottom: '8px',
               fontSize: '13px',
               fontWeight: 'bold',
@@ -233,7 +233,7 @@ const AktifSira = () => {
       )}
 
       {/* Ana İçerik - Tam Ortalanmış */}
-      <div style={{ 
+      <div style={{
         marginLeft: isMobile ? '15px' : isDesktop ? '280px' : '270px',
         marginRight: '15px',
         maxWidth: isMobile ? 'calc(100% - 30px)' : 'none',
@@ -242,46 +242,46 @@ const AktifSira = () => {
         alignItems: 'center',
         width: isMobile ? 'auto' : 'calc(100% - ' + (isMobile ? '30px' : isDesktop ? '295px' : '285px') + ')'
       }}>
-        
+
         {/* Başlık ve Dışa Aktarma Butonları */}
-        <div style={{ 
-          backgroundColor: 'white', 
-          padding: isMobile ? '20px' : isDesktop ? '30px' : '25px', 
-          borderRadius: '12px', 
-          marginBottom: '20px', 
+        <div style={{
+          backgroundColor: 'white',
+          padding: isMobile ? '20px' : isDesktop ? '30px' : '25px',
+          borderRadius: '12px',
+          marginBottom: '20px',
           border: '1px solid #ddd',
           boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
           width: '100%',
           maxWidth: '100%'
         }}>
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: isMobile ? 'flex-start' : 'center', 
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: isMobile ? 'flex-start' : 'center',
             marginBottom: '20px',
             flexDirection: isMobile ? 'column' : 'row',
             gap: isMobile ? '15px' : '20px'
           }}>
-            <h1 style={{ 
-              fontSize: isDesktop ? '32px' : isTablet ? '28px' : '24px', 
-              fontWeight: 'bold', 
+            <h1 style={{
+              fontSize: isDesktop ? '32px' : isTablet ? '28px' : '24px',
+              fontWeight: 'bold',
               margin: 0,
               color: '#2c3e50'
             }}>AKTİF SIRA DURUM</h1>
-            
-            <div style={{ 
-              display: 'flex', 
+
+            <div style={{
+              display: 'flex',
               gap: '15px',
               flexWrap: 'wrap'
             }}>
-              <button 
+              <button
                 onClick={excelAktar}
-                style={{ 
-                  backgroundColor: '#28a745', 
-                  color: 'white', 
-                  border: 'none', 
-                  padding: isDesktop ? '12px 24px' : '10px 20px', 
-                  borderRadius: '8px', 
+                style={{
+                  backgroundColor: '#28a745',
+                  color: 'white',
+                  border: 'none',
+                  padding: isDesktop ? '12px 24px' : '10px 20px',
+                  borderRadius: '8px',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -302,15 +302,15 @@ const AktifSira = () => {
               >
                 📊 Excel
               </button>
-              
-              <button 
+
+              <button
                 onClick={pdfAktar}
-                style={{ 
-                  backgroundColor: '#dc3545', 
-                  color: 'white', 
-                  border: 'none', 
-                  padding: isDesktop ? '12px 24px' : '10px 20px', 
-                  borderRadius: '8px', 
+                style={{
+                  backgroundColor: '#dc3545',
+                  color: 'white',
+                  border: 'none',
+                  padding: isDesktop ? '12px 24px' : '10px 20px',
+                  borderRadius: '8px',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -333,23 +333,23 @@ const AktifSira = () => {
               </button>
             </div>
           </div>
-          
-          <p style={{ 
-            margin: '0 0 20px 0', 
+
+          <p style={{
+            margin: '0 0 20px 0',
             color: '#6c757d',
             fontSize: isDesktop ? '16px' : '14px'
           }}>
             Yanında 🔍 simgesi bulunan bilgileri arama yerinden arayabilirsiniz.
           </p>
-          
+
           <div style={{ marginTop: '20px' }}>
-            <input 
-              type="text" 
-              placeholder="Ara..." 
-              style={{ 
-                padding: isDesktop ? '15px 20px' : '12px 16px', 
-                border: '2px solid #e9ecef', 
-                borderRadius: '10px', 
+            <input
+              type="text"
+              placeholder="Ara..."
+              style={{
+                padding: isDesktop ? '15px 20px' : '12px 16px',
+                border: '2px solid #e9ecef',
+                borderRadius: '10px',
                 width: isMobile ? '100%' : isDesktop ? '500px' : '400px',
                 maxWidth: '100%',
                 fontSize: isDesktop ? '16px' : '14px',
@@ -363,83 +363,83 @@ const AktifSira = () => {
         </div>
 
         {/* Ana Tablo - Tam Genişlik ve Ortalanmış */}
-        <div style={{ 
-          backgroundColor: 'white', 
-          borderRadius: '12px', 
-          border: '1px solid #ddd', 
-          overflow: 'hidden', 
+        <div style={{
+          backgroundColor: 'white',
+          borderRadius: '12px',
+          border: '1px solid #ddd',
+          overflow: 'hidden',
           position: 'relative',
           boxShadow: '0 6px 20px rgba(0,0,0,0.1)',
           overflowX: 'auto',
           width: '100%',
           maxWidth: '100%'
         }}>
-          <table style={{ 
-            width: '100%', 
+          <table style={{
+            width: '100%',
             borderCollapse: 'collapse',
             minWidth: isMobile ? '700px' : '100%',
             tableLayout: 'auto'
           }}>
             <thead>
-              <tr style={{ 
-                background: 'linear-gradient(135deg, #343a40 0%, #495057 100%)', 
-                color: 'white' 
+              <tr style={{
+                background: 'linear-gradient(135deg, #343a40 0%, #495057 100%)',
+                color: 'white'
               }}>
-                <th style={{ 
-                  border: '1px solid #495057', 
-                  padding: isDesktop ? '20px' : isTablet ? '16px' : '14px', 
-                  textAlign: 'left', 
-                  fontWeight: 'bold', 
+                <th style={{
+                  border: '1px solid #495057',
+                  padding: isDesktop ? '20px' : isTablet ? '16px' : '14px',
+                  textAlign: 'left',
+                  fontWeight: 'bold',
                   fontSize: isDesktop ? '18px' : isTablet ? '16px' : '14px',
                   width: '12%'
                 }}>
                   SIRA 🔍
                 </th>
-                <th style={{ 
-                  border: '1px solid #495057', 
-                  padding: isDesktop ? '20px' : isTablet ? '16px' : '14px', 
-                  textAlign: 'left', 
-                  fontWeight: 'bold', 
+                <th style={{
+                  border: '1px solid #495057',
+                  padding: isDesktop ? '20px' : isTablet ? '16px' : '14px',
+                  textAlign: 'left',
+                  fontWeight: 'bold',
                   fontSize: isDesktop ? '18px' : isTablet ? '16px' : '14px',
                   width: '15%'
                 }}>
-                  KOD 🔍  
+                  KOD 🔍
                 </th>
-                <th style={{ 
-                  border: '1px solid #495057', 
-                  padding: isDesktop ? '20px' : isTablet ? '16px' : '14px', 
-                  textAlign: 'left', 
-                  fontWeight: 'bold', 
+                <th style={{
+                  border: '1px solid #495057',
+                  padding: isDesktop ? '20px' : isTablet ? '16px' : '14px',
+                  textAlign: 'left',
+                  fontWeight: 'bold',
                   fontSize: isDesktop ? '18px' : isTablet ? '16px' : '14px',
                   width: '20%'
                 }}>
                   PLAKA 🔍
                 </th>
-                <th style={{ 
-                  border: '1px solid #495057', 
-                  padding: isDesktop ? '20px' : isTablet ? '16px' : '14px', 
-                  textAlign: 'left', 
-                  fontWeight: 'bold', 
+                <th style={{
+                  border: '1px solid #495057',
+                  padding: isDesktop ? '20px' : isTablet ? '16px' : '14px',
+                  textAlign: 'left',
+                  fontWeight: 'bold',
                   fontSize: isDesktop ? '18px' : isTablet ? '16px' : '14px',
                   width: '20%'
                 }}>
                   ARAÇ TİPİ
                 </th>
-                <th style={{ 
-                  border: '1px solid #495057', 
-                  padding: isDesktop ? '20px' : isTablet ? '16px' : '14px', 
-                  textAlign: 'center', 
-                  fontWeight: 'bold', 
+                <th style={{
+                  border: '1px solid #495057',
+                  padding: isDesktop ? '20px' : isTablet ? '16px' : '14px',
+                  textAlign: 'center',
+                  fontWeight: 'bold',
                   fontSize: isDesktop ? '18px' : isTablet ? '16px' : '14px',
                   width: '20%'
                 }}>
                   ⭐JOKER⭐
                 </th>
-                <th style={{ 
-                  border: '1px solid #495057', 
-                  padding: isDesktop ? '20px' : isTablet ? '16px' : '14px', 
-                  textAlign: 'center', 
-                  fontWeight: 'bold', 
+                <th style={{
+                  border: '1px solid #495057',
+                  padding: isDesktop ? '20px' : isTablet ? '16px' : '14px',
+                  textAlign: 'center',
+                  fontWeight: 'bold',
                   fontSize: isDesktop ? '18px' : isTablet ? '16px' : '14px',
                   width: '13%'
                 }}>
@@ -449,7 +449,7 @@ const AktifSira = () => {
             </thead>
             <tbody>
               {uyeler.map((uye, index) => (
-                <tr 
+                <tr
                   key={uye.id}
                   onClick={() => uyeTikla(uye)}
                   style={{
@@ -472,48 +472,48 @@ const AktifSira = () => {
                     tr.style.backgroundColor = uye.durum === "acik" ? 'white' : '#ff6b6b';
                   }}
                 >
-                  <td style={{ 
-                    border: '1px solid #dee2e6', 
-                    padding: isDesktop ? '20px' : isTablet ? '16px' : '14px', 
+                  <td style={{
+                    border: '1px solid #dee2e6',
+                    padding: isDesktop ? '20px' : isTablet ? '16px' : '14px',
                     fontWeight: 'bold',
                     fontSize: isDesktop ? '18px' : isTablet ? '16px' : '14px'
                   }}>
                     {uye.sira}
                   </td>
-                  <td style={{ 
-                    border: '1px solid #dee2e6', 
+                  <td style={{
+                    border: '1px solid #dee2e6',
                     padding: isDesktop ? '20px' : isTablet ? '16px' : '14px',
                     fontSize: isDesktop ? '18px' : isTablet ? '16px' : '14px',
                     fontWeight: '500'
                   }}>
                     {uye.kod}
                   </td>
-                  <td style={{ 
-                    border: '1px solid #dee2e6', 
-                    padding: isDesktop ? '20px' : isTablet ? '16px' : '14px', 
+                  <td style={{
+                    border: '1px solid #dee2e6',
+                    padding: isDesktop ? '20px' : isTablet ? '16px' : '14px',
                     fontWeight: 'bold',
                     fontSize: isDesktop ? '18px' : isTablet ? '16px' : '14px'
                   }}>
                     {uye.plaka}
                   </td>
-                  <td style={{ 
-                    border: '1px solid #dee2e6', 
+                  <td style={{
+                    border: '1px solid #dee2e6',
                     padding: isDesktop ? '20px' : isTablet ? '16px' : '14px',
                     fontSize: isDesktop ? '18px' : isTablet ? '16px' : '14px'
                   }}>
                     {uye.aracTipi}
                   </td>
-                  <td style={{ 
-                    border: '1px solid #dee2e6', 
-                    padding: isDesktop ? '20px' : isTablet ? '16px' : '14px', 
+                  <td style={{
+                    border: '1px solid #dee2e6',
+                    padding: isDesktop ? '20px' : isTablet ? '16px' : '14px',
                     textAlign: 'center',
                     fontSize: isDesktop ? '20px' : '18px'
                   }}>
                     {uye.joker ? '⭐' : '0'}
                   </td>
-                  <td style={{ 
-                    border: '1px solid #dee2e6', 
-                    padding: isDesktop ? '20px' : isTablet ? '16px' : '14px', 
+                  <td style={{
+                    border: '1px solid #dee2e6',
+                    padding: isDesktop ? '20px' : isTablet ? '16px' : '14px',
                     textAlign: 'center',
                     fontSize: isDesktop ? '18px' : isTablet ? '16px' : '14px'
                   }}>
@@ -528,7 +528,7 @@ const AktifSira = () => {
 
       {/* Üye Panel Menü */}
       {panelAcik && secilenUye && (
-        <div 
+        <div
           style={{
             position: 'fixed',
             top: 0,
@@ -544,7 +544,7 @@ const AktifSira = () => {
           }}
           onClick={() => setPanelAcik(false)}
         >
-          <div 
+          <div
             style={{
               backgroundColor: 'white',
               borderRadius: '15px',
@@ -556,9 +556,9 @@ const AktifSira = () => {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 style={{ 
-              marginTop: 0, 
-              marginBottom: '25px', 
+            <h3 style={{
+              marginTop: 0,
+              marginBottom: '25px',
               textAlign: 'center',
               fontSize: isDesktop ? '22px' : isTablet ? '20px' : '18px',
               color: '#2c3e50',
@@ -566,9 +566,9 @@ const AktifSira = () => {
             }}>
               {secilenUye.plaka} - {secilenUye.kod}
             </h3>
-            
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              <button 
+              <button
                 onClick={() => cezaVer(secilenUye.id)}
                 style={{
                   backgroundColor: '#ffc107',
@@ -595,8 +595,8 @@ const AktifSira = () => {
               >
                 Ceza Ver
               </button>
-              
-              <button 
+
+              <button
                 onClick={() => siraAc(secilenUye.id)}
                 style={{
                   backgroundColor: '#28a745',
@@ -623,8 +623,8 @@ const AktifSira = () => {
               >
                 Sıra Aç
               </button>
-              
-              <button 
+
+              <button
                 onClick={() => siraKapat(secilenUye.id)}
                 style={{
                   backgroundColor: '#dc3545',
@@ -651,8 +651,8 @@ const AktifSira = () => {
               >
                 Sıra Kapat
               </button>
-              
-              <button 
+
+              <button
                 onClick={() => siraSonuCezasi(secilenUye.id)}
                 style={{
                   backgroundColor: '#6f42c1',
@@ -679,8 +679,8 @@ const AktifSira = () => {
               >
                 Sıra Sonu Cezası
               </button>
-              
-              <button 
+
+              <button
                 onClick={() => setPanelAcik(false)}
                 style={{
                   backgroundColor: '#6c757d',
