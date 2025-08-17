@@ -10,8 +10,8 @@ function Header() {
     switch (location.pathname) {
       case '/':
         return 'Anasayfa';
-      case '/sira-durumu':
-        return 'Sıra Durumu';
+      case '/isDagitimi':
+        return 'İş Dağıtımı';
       case '/AktifSira':
         return 'Aktif Sıra';
       case '/uyeler':
