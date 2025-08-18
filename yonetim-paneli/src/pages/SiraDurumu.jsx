@@ -51,17 +51,25 @@ const ProjeksiyonSira = () => {
     const isTablet = screenSize.width > 768 && screenSize.width <= 1200;
     const isMobile = screenSize.width <= 768;
 
-    // Grid sabitleri
-    const rowCount = 25; // 30 satır
+    // Grid sabitleri - responsive satır sayısı hesaplaması
     const columnCount = 8; // 8 sütun görünür
     const gap = isMobile ? 4 : 6;
 
-    // Görünür kutu boyu hesapla (sadece font ölçeklemek için kullanıyoruz)
+    // Dinamik satır sayısı hesapla
     const headerHeight = isMobile ? 90 : 100;
     const bottomBarHeight = 60;
     const padding = 20;
     const availableHeight = screenSize.height - headerHeight - bottomBarHeight - padding;
-    const boxHeight = Math.max(Math.floor((availableHeight - gap * (rowCount - 1)) / rowCount), 45);
+
+    // Minimum kutu yüksekliği ve maksimum satır sayısı
+    const minBoxHeight = 45;
+    const maxPossibleRows = Math.floor((availableHeight + gap) / (minBoxHeight + gap));
+
+    // Satır sayısını ekran boyutuna göre dinamik olarak ayarla
+    const rowCount = Math.max(15, Math.min(30, maxPossibleRows)); // Minimum 5, maksimum 25 satır
+
+    // Görünür kutu boyu hesapla (sadece font ölçeklemek için kullanıyoruz)
+    const boxHeight = Math.max(Math.floor((availableHeight - gap * (rowCount - 1)) / rowCount), minBoxHeight);
 
     // Saat güncelleme
     useEffect(() => {
@@ -75,7 +83,7 @@ const ProjeksiyonSira = () => {
             setCurrentColumn((prev) => (prev + 1) % Math.max(1, Math.ceil(siralar.length / rowCount)));
         }, 6000); // 6 sn
         return () => clearInterval(slideInterval);
-    }, [siralar.length]);
+    }, [siralar.length, rowCount]);
 
     // 30 sn'de bir veri yenileme placeholder
     useEffect(() => {
@@ -95,16 +103,16 @@ const ProjeksiyonSira = () => {
     // sütunlar soldan sağa giderken +rowCount adım farkını ifade eder. Genel formül aşağıdaki gibidir.
 
     const organizedDataByColumns = useMemo(() => {
-        // Satır/sütun mantığı: Her sütun 25 kayıt içerir (1-25, 26-50, ...)
+        // Satır/sütun mantığı: Her sütun rowCount kayıt içerir (1-rowCount, rowCount+1-2*rowCount, ...)
         // ve bu kayıtlar grid üzerinde ALTTAN YUKARI doğru artacak şekilde dizilir.
-        // Yani 1 en altta, 25 en üstte olacak; son sütun dolu değilse sayılar yine en alttan başlayıp yukarı doğru dolar.
+        // Yani 1 en altta, rowCount en üstte olacak; son sütun dolu değilse sayılar yine en alttan başlayıp yukarı doğru dolar.
         const sorted = [...siralar].sort((a, b) => a.sira - b.sira);
         const totalCols = Math.ceil(sorted.length / rowCount);
         const cols = [];
         for (let col = 0; col < totalCols; col++) {
             const start = col * rowCount; // 0-based
             const end = Math.min(start + rowCount, sorted.length); // exclusive
-            const itemsAsc = sorted.slice(start, end); // [start..end) — 1..25, 26..50, ...
+            const itemsAsc = sorted.slice(start, end); // [start..end) — 1..rowCount, rowCount+1..2*rowCount, ...
             const emptyCountTop = rowCount - itemsAsc.length; // son sütun eksikse üstte boşluk bırak
             const paddedTop = Array.from({ length: emptyCountTop }, () => null);
             // Top-to-bottom dizilim: üstte boşluklar, altta veriler => ekranda artış alttan yukarı
@@ -129,7 +137,7 @@ const ProjeksiyonSira = () => {
             arr.push({ colIndex, items });
         }
         return arr;
-    }, [organizedDataByColumns, currentColumn]);
+    }, [organizedDataByColumns, currentColumn, columnCount]);
 
     // Durum sayıları (tüm veri için)
     const acikSayisi = useMemo(() => siralar.filter((s) => s.durum === "acik").length, [siralar]);
@@ -378,7 +386,7 @@ const ProjeksiyonSira = () => {
                     fontWeight: 600,
                 }}
             >
-                📊 Sütun: {wrapIndex(currentColumn) + 1}-{wrapIndex(currentColumn + columnCount)} / {Math.max(1, totalColumns)}
+                📊 Sütun: {wrapIndex(currentColumn) + 1}-{wrapIndex(currentColumn + columnCount)} / {Math.max(1, totalColumns)} | Satır: {rowCount}
             </div>
         </div>
     );
