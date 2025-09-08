@@ -335,8 +335,6 @@ app.delete("/is-emirleri", (req, res) => {
   }
 });
 
-
-
 /* -------------------- RAPORLAR ENDPOINTLERİ -------------------- */
 
 // GET /raporlar - tüm raporları getir
@@ -378,5 +376,309 @@ app.get("/raporlar/arama", (req, res) => {
       return res.status(500).json({ message: "Veritabanı hatası" });
     }
     res.json(results);
+  });
+});
+
+/* -------------------- İŞLER ENDPOINTLERİ -------------------- */
+
+// GET /isler - tüm işleri getir
+app.get("/isler", (req, res) => {
+  console.log('GET /isler endpoint\'ine istek geldi');
+  
+  db.query("SELECT * FROM isler ORDER BY id DESC", (err, results) => {
+    if (err) {
+      console.error('Veritabanı hatası:', err);
+      return res.status(500).json({ message: "Veritabanı hatası", error: err.message });
+    }
+    
+    console.log('İşler döndürüldü:', results.length, 'kayıt');
+    res.json(results);
+  });
+});
+
+// POST /isler - tekli veya toplu iş ekle
+app.post("/isler", (req, res) => {
+  console.log('POST /isler - Yeni iş(ler) ekleniyor');
+  
+  const { action, data } = req.body;
+
+  if (action === 'bulk_insert') {
+    // Excel'den toplu ekleme
+    console.log('Toplu ekleme:', data?.length, 'kayıt');
+    
+    if (!data || !Array.isArray(data) || data.length === 0) {
+      return res.status(400).json({ message: "Eklenecek veri bulunamadı" });
+    }
+
+    const sql = `INSERT INTO isler 
+      (musteri, nakliye_no, guzergah, musteri_adi, arac_tipi, tonaj, aciklama, tur) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    db.getConnection((err, connection) => {
+      if (err) {
+        console.error('Bağlantı hatası:', err);
+        return res.status(500).json({ message: "Veritabanı bağlantı hatası" });
+      }
+
+      connection.beginTransaction((err) => {
+        if (err) {
+          connection.release();
+          console.error('Transaction başlatma hatası:', err);
+          return res.status(500).json({ message: "Transaction hatası" });
+        }
+
+        let completedInserts = 0;
+        let hasError = false;
+
+        data.forEach((item, index) => {
+          const values = [
+            item.musteri || '',
+            item.nakliye_no || '',
+            item.guzergah || '',
+            item.musteri_adi || '',
+            item.arac_tipi || '',
+            item.tonaj || 0,
+            item.aciklama || '',
+            item.tur || ''
+          ];
+
+          connection.query(sql, values, (err, results) => {
+            if (err && !hasError) {
+              hasError = true;
+              console.error('Toplu ekleme hatası:', err);
+              return connection.rollback(() => {
+                connection.release();
+                res.status(500).json({ 
+                  message: "Toplu ekleme hatası", 
+                  error: err.message,
+                  failedAt: index + 1
+                });
+              });
+            }
+
+            completedInserts++;
+            
+            if (completedInserts === data.length && !hasError) {
+              connection.commit((err) => {
+                if (err) {
+                  console.error('Commit hatası:', err);
+                  return connection.rollback(() => {
+                    connection.release();
+                    res.status(500).json({ message: "Commit hatası" });
+                  });
+                }
+                
+                connection.release();
+                console.log('Toplu ekleme başarılı:', data.length, 'kayıt');
+                res.json({ 
+                  message: "Toplu ekleme başarılı", 
+                  insertedCount: data.length 
+                });
+              });
+            }
+          });
+        });
+      });
+    });
+
+  } else {
+    // Tekli ekleme
+    const { musteri, nakliye_no, guzergah, musteri_adi, arac_tipi, tonaj, aciklama, tur } = data || req.body;
+
+    const sql = `INSERT INTO isler 
+      (musteri, nakliye_no, guzergah, musteri_adi, arac_tipi, tonaj, aciklama, tur) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const values = [musteri, nakliye_no, guzergah, musteri_adi, arac_tipi, tonaj || 0, aciklama, tur];
+
+    db.query(sql, values, (err, results) => {
+      if (err) {
+        console.error('İş ekleme hatası:', err);
+        return res.status(500).json({ message: "Veritabanı hatası", error: err.message });
+      }
+      console.log('Yeni iş eklendi, ID:', results.insertId);
+      res.json({ isId: results.insertId, message: "İş eklendi" });
+    });
+  }
+});
+
+// PUT /isler/:id - iş güncelle
+app.put("/isler/:id", (req, res) => {
+  const { id } = req.params;
+  console.log('PUT /isler/' + id + ' - İş güncelleniyor:', req.body);
+  
+  const { musteri, nakliye_no, guzergah, musteri_adi, arac_tipi, tonaj, aciklama, tur } = req.body;
+
+  const sql = `UPDATE isler SET 
+    musteri=?, nakliye_no=?, guzergah=?, musteri_adi=?, 
+    arac_tipi=?, tonaj=?, aciklama=?, tur=? 
+    WHERE id=?`;
+  const values = [musteri, nakliye_no, guzergah, musteri_adi, arac_tipi, tonaj || 0, aciklama, tur, id];
+
+  db.query(sql, values, (err, results) => {
+    if (err) {
+      console.error('İş güncelleme hatası:', err);
+      return res.status(500).json({ message: "Veritabanı hatası", error: err.message });
+    }
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: "İş bulunamadı" });
+    }
+    console.log('İş güncellendi, ID:', id);
+    res.json({ message: "İş güncellendi" });
+  });
+});
+
+// DELETE /isler/:id - iş sil
+app.delete("/isler/:id", (req, res) => {
+  const { id } = req.params;
+  console.log('DELETE /isler/' + id + ' - İş siliniyor');
+  
+  db.query("DELETE FROM isler WHERE id = ?", [id], (err, results) => {
+    if (err) {
+      console.error('İş silme hatası:', err);
+      return res.status(500).json({ message: "Veritabanı hatası", error: err.message });
+    }
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: "İş bulunamadı" });
+    }
+    console.log('İş silindi, ID:', id);
+    res.json({ message: "İş silindi" });
+  });
+});
+
+/* -------------------- YENİ: İŞ DAĞITIM ENDPOINTLERİ -------------------- */
+
+// POST /transfer-latest-jobs - Son işleri transferred_jobs tablosuna aktar
+app.post("/transfer-latest-jobs", (req, res) => {
+  console.log('POST /transfer-latest-jobs - Son işler aktarılıyor');
+  
+  // İlk önce isler tablosundan en son 10 kaydı al
+  db.query("SELECT * FROM isler ORDER BY id DESC LIMIT 10", (err, results) => {
+    if (err) {
+      console.error('İşler çekme hatası:', err);
+      return res.status(500).json({ message: "İşler çekme hatası", error: err.message });
+    }
+
+    if (results.length === 0) {
+      return res.json({ message: "Aktarılacak iş bulunamadı", transferredCount: 0 });
+    }
+
+    // transferred_jobs tablosuna ekle
+    const sql = `INSERT INTO transferred_jobs 
+      (musteri, nakliye_no, guzergah, musteri_adi, arac_tipi, tonaj, aciklama, tur, transfer_date) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())`;
+
+    db.getConnection((err, connection) => {
+      if (err) {
+        console.error('Bağlantı hatası:', err);
+        return res.status(500).json({ message: "Veritabanı bağlantı hatası" });
+      }
+
+      connection.beginTransaction((err) => {
+        if (err) {
+          connection.release();
+          console.error('Transaction başlatma hatası:', err);
+          return res.status(500).json({ message: "Transaction hatası" });
+        }
+
+        let completedInserts = 0;
+        let hasError = false;
+
+        results.forEach((item, index) => {
+          const values = [
+            item.musteri || '',
+            item.nakliye_no || '',
+            item.guzergah || '',
+            item.musteri_adi || '',
+            item.arac_tipi || '',
+            item.tonaj || 0,
+            item.aciklama || '',
+            item.tur || ''
+          ];
+
+          connection.query(sql, values, (err, insertResult) => {
+            if (err && !hasError) {
+              hasError = true;
+              console.error('Aktarma hatası:', err);
+              return connection.rollback(() => {
+                connection.release();
+                res.status(500).json({ 
+                  message: "Aktarma hatası", 
+                  error: err.message,
+                  failedAt: index + 1
+                });
+              });
+            }
+
+            completedInserts++;
+            
+            if (completedInserts === results.length && !hasError) {
+              connection.commit((err) => {
+                if (err) {
+                  console.error('Commit hatası:', err);
+                  return connection.rollback(() => {
+                    connection.release();
+                    res.status(500).json({ message: "Commit hatası" });
+                  });
+                }
+                
+                connection.release();
+                console.log('İşler başarıyla aktarıldı:', results.length, 'kayıt');
+                res.json({ 
+                  message: "İşler başarıyla aktarıldı", 
+                  transferredCount: results.length 
+                });
+              });
+            }
+          });
+        });
+      });
+    });
+  });
+});
+
+// GET /transferred-jobs - Aktarılmış işleri getir
+app.get("/transferred-jobs", (req, res) => {
+  console.log('GET /transferred-jobs endpoint\'ine istek geldi');
+  
+  db.query("SELECT * FROM transferred_jobs ORDER BY transfer_date DESC", (err, results) => {
+    if (err) {
+      console.error('Aktarılmış işler çekme hatası:', err);
+      return res.status(500).json({ message: "Veritabanı hatası", error: err.message });
+    }
+    
+    console.log('Aktarılmış işler döndürüldü:', results.length, 'kayıt');
+    res.json(results);
+  });
+});
+
+// DELETE /transferred-jobs/:id - Aktarılmış işi sil
+app.delete("/transferred-jobs/:id", (req, res) => {
+  const { id } = req.params;
+  console.log('DELETE /transferred-jobs/' + id + ' - Aktarılmış iş siliniyor');
+  
+  db.query("DELETE FROM transferred_jobs WHERE id = ?", [id], (err, results) => {
+    if (err) {
+      console.error('Aktarılmış iş silme hatası:', err);
+      return res.status(500).json({ message: "Veritabanı hatası", error: err.message });
+    }
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: "Aktarılmış iş bulunamadı" });
+    }
+    console.log('Aktarılmış iş silindi, ID:', id);
+    res.json({ message: "Aktarılmış iş silindi" });
+  });
+});
+
+// POST /clear-transferred-jobs - Tüm aktarılmış işleri temizle
+app.post("/clear-transferred-jobs", (req, res) => {
+  console.log('POST /clear-transferred-jobs - Tüm aktarılmış işler temizleniyor');
+  
+  db.query("DELETE FROM transferred_jobs", (err, results) => {
+    if (err) {
+      console.error('Aktarılmış işleri temizleme hatası:', err);
+      return res.status(500).json({ message: "Veritabanı hatası", error: err.message });
+    }
+    console.log('Tüm aktarılmış işler temizlendi, silinen kayıt:', results.affectedRows);
+    res.json({ message: "Tüm aktarılmış işler temizlendi", deletedCount: results.affectedRows });
   });
 });

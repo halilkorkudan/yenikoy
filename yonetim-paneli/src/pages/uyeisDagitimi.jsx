@@ -276,10 +276,10 @@ const IsDagitimi = () => {
 
       {/* Ana içerik - YAN YANA */}
       <div style={{ display: 'flex', height: tamEkran ? 'calc(100vh - 120px)' : '600px' }}>
-        {/* Sol panel */}
+        {/* Sol panel - Küçültüldü */}
         {(görünümModu === 'sadece-sol' || görünümModu === 'her-ikisi') && (
           <div style={{ 
-            width: görünümModu === 'sadece-sol' ? '100%' : '50%', 
+            width: görünümModu === 'sadece-sol' ? '100%' : '35%', 
             borderRight: görünümModu === 'her-ikisi' ? '1px solid #d1d5db' : 'none', 
             display: 'flex', 
             flexDirection: 'column' 
@@ -345,10 +345,10 @@ const IsDagitimi = () => {
           </div>
         )}
 
-        {/* Sağ panel */}
+        {/* Sağ panel - Büyütüldü */}
         {(görünümModu === 'sadece-sag' || görünümModu === 'her-ikisi') && (
           <div style={{ 
-            width: görünümModu === 'sadece-sag' ? '100%' : '50%', 
+            width: görünümModu === 'sadece-sag' ? '100%' : '65%', 
             display: 'flex', 
             flexDirection: 'column' 
           }}>
