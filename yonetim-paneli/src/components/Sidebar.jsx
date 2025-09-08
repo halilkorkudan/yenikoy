@@ -155,9 +155,7 @@ const Sidebar = () => {
             {!collapsed && "Raporlar"}
           </Link>
         </li>
-        <li className="nav-item mb-2">
-          <Link className="nav-link text-white" to="/raporlar">Raporlar</Link>
-        </li>
+        
         
         
       </ul>

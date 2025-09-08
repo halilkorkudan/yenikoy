@@ -7,7 +7,7 @@ import UyeisDag from './pages/uyeisDagitimi';
 import Ayarlar from './pages/AktifSira';
 import Uyeler from './pages/Uyeler';
 import FirmaBilgileri from "./pages/firma-bilgileri";
-import Raporlar from './pages/Raporlar';
+import Raporlar from './pages/raporlar';
 import IsEmirleri from './pages/isEmirleri';
 import SiraDurumu from './pages/SiraDurumu';
 
